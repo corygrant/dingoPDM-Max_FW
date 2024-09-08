@@ -19,7 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set the project name
-set(CMAKE_PROJECT_NAME DingoPDM_FW)
+set(CMAKE_PROJECT_NAME dingoPDM-Max_FW)
 
 # Include toolchain file
 include("cmake/gcc-arm-none-eabi.cmake")
@@ -65,7 +65,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     PDM/Src/wipers.c
     PDM/Src/blink_keypad.c
 )
-
+ 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
