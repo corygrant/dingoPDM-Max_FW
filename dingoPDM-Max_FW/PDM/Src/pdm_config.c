@@ -738,11 +738,12 @@ void PdmConfig_SetDefault(PdmConfig_t* pConfig){
 52  Output 2
 53  Output 3
 54  Output 4
-55  Output 5
-56  Output 6
-57  Output 7
-58  Output 8
-59  Wiper Slow Out
-60  Wiper Fast Out
-61  Always On
+55  Wiper Slow Out
+56  Wiper Fast Out
+57 Flasher 1
+58 Flasher 2
+59 Flasher 3
+60 Flasher 4
+61 Flasher 5
+62  Always On
  */

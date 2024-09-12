@@ -125,7 +125,8 @@ void Profet_UpdateIS(volatile ProfetTypeDef *profet, volatile uint16_t newVal, v
 
   //BTS7002 - IS inaccurate below 4A
   //BTS7008 - IS fairly accurate across range
-
+  //BTS70012 - Needs to be tested and calibrated 
+  
   //Calculate current at ADC, multiply by kILIS ratio to get output current
   //Use the measured VDDA value to calculate volts/step
   //IL = (rawVal * (VDDA / 4095)) / 1.2k) * kILIS

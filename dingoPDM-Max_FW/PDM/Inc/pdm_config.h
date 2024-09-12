@@ -12,10 +12,10 @@
 #include "wipers.h"
 
 #define PDM_MAJOR_VERSION 0
-#define PDM_MINOR_VERSION 3
-#define PDM_BUILD 4
+#define PDM_MINOR_VERSION 1
+#define PDM_BUILD 0
 
-#define PDM_NUM_OUTPUTS 8
+#define PDM_NUM_OUTPUTS 4
 #define PDM_NUM_INPUTS 2
 #define PDM_NUM_VIRT_INPUTS 16
 #define PDM_NUM_CAN_INPUTS 32
@@ -23,7 +23,7 @@
 #define PDM_NUM_WIPER_INTER_DELAYS 6
 #define PDM_NUM_WIPER_SPEED_MAP 8
 
-#define PDM_VAR_MAP_SIZE 66
+#define PDM_VAR_MAP_SIZE 62
 
 #define CAN_TX_SETTING_ID_OFFSET 30
 #define CAN_TX_MSG_ID_OFFSET 31

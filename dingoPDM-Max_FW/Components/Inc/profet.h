@@ -11,10 +11,7 @@ typedef enum{
   BTS7002_1EPP,
   BTS7008_2EPA_CH1,
   BTS7008_2EPA_CH2,
-  BTS724_CH1,
-  BTS724_CH2,
-  BTS724_CH3,
-  BTS724_CH4
+  BTS70012_1ESP
 } ProfetModelTypeDef;
 
 typedef enum {

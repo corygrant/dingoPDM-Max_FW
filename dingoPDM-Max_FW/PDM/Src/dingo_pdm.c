@@ -23,15 +23,14 @@
 //========================================================================
 // STM ADC Counts
 //========================================================================
-#define ADC_1_COUNT 8
-#define ADC_1_BATT_SENSE 3
-#define ADC_1_TEMP_SENSOR 6
-#define ADC_1_VREF_INT 7
-#define ADC_1_PF1 0 //ADC1_0
-#define ADC_1_PF2 4 //ADC1_12
-#define ADC_1_PF3_4 5 //ADC1_13
-#define ADC_1_PF5_6 1 //ADC1_1
-#define ADC_1_PF7_8 2 //ADC1_2
+#define ADC_1_COUNT 7
+#define ADC_1_BATT_SENSE 4 //ADC1_3
+#define ADC_1_TEMP_SENSOR 5
+#define ADC_1_VREF_INT 6
+#define ADC_1_PF1 0 //ADC1_13
+#define ADC_1_PF2 1 //ADC1_12
+#define ADC_1_PF3 2 //ADC1_0
+#define ADC_1_PF4 3 //ADC1_1
 
 //========================================================================
 // CAN
@@ -500,13 +499,8 @@ void PdmMainTask(osThreadId_t* thisThreadId, ADC_HandleTypeDef* hadc1, I2C_Handl
     //=====================================================================================================
     HAL_GPIO_WritePin(PF_DEN1_GPIO_Port, PF_DEN1_Pin, GPIO_PIN_SET);
     HAL_GPIO_WritePin(PF_DEN2_GPIO_Port, PF_DEN2_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(PF_DEN3_4_GPIO_Port, PF_DEN3_4_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(PF_DEN5_6_GPIO_Port, PF_DEN5_6_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(PF_DEN7_8_GPIO_Port, PF_DEN7_8_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(PF_DSEL3_4_GPIO_Port, PF_DSEL3_4_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(PF_DSEL5_6_GPIO_Port, PF_DSEL5_6_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(PF_DSEL7_8_GPIO_Port, PF_DSEL7_8_Pin, GPIO_PIN_SET);
-    //Wait for DSEL changeover (up to 60us)
+    HAL_GPIO_WritePin(PF_DEN3_GPIO_Port, PF_DEN3_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(PF_DEN4_GPIO_Port, PF_DEN4_Pin, GPIO_PIN_SET);
     osDelay(1);
     
     //=====================================================================================================
@@ -514,25 +508,8 @@ void PdmMainTask(osThreadId_t* thisThreadId, ADC_HandleTypeDef* hadc1, I2C_Handl
     //=====================================================================================================
     Profet_UpdateIS(&pf[0], nAdc1Data[ADC_1_PF1], fVDDA);
     Profet_UpdateIS(&pf[1], nAdc1Data[ADC_1_PF2], fVDDA);
-    Profet_UpdateIS(&pf[3], nAdc1Data[ADC_1_PF3_4], fVDDA);
-    Profet_UpdateIS(&pf[5], nAdc1Data[ADC_1_PF5_6], fVDDA);
-    Profet_UpdateIS(&pf[7], nAdc1Data[ADC_1_PF7_8], fVDDA);
-
-    //=====================================================================================================
-    //Flip Profet DSEL to channel 2
-    //=====================================================================================================
-    HAL_GPIO_WritePin(PF_DSEL3_4_GPIO_Port, PF_DSEL3_4_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(PF_DSEL5_6_GPIO_Port, PF_DSEL5_6_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(PF_DSEL7_8_GPIO_Port, PF_DSEL7_8_Pin, GPIO_PIN_RESET);
-    //Wait for DSEL changeover (up to 60us)
-    osDelay(1);
-
-    //=====================================================================================================
-    // Update output current
-    //=====================================================================================================
-    Profet_UpdateIS(&pf[2], nAdc1Data[ADC_1_PF3_4], fVDDA);
-    Profet_UpdateIS(&pf[4], nAdc1Data[ADC_1_PF5_6], fVDDA);
-    Profet_UpdateIS(&pf[6], nAdc1Data[ADC_1_PF7_8], fVDDA);
+    Profet_UpdateIS(&pf[2], nAdc1Data[ADC_1_PF3], fVDDA);
+    Profet_UpdateIS(&pf[3], nAdc1Data[ADC_1_PF4], fVDDA);
 
     //=====================================================================================================
     // Update digital inputs
@@ -785,7 +762,7 @@ void CanTxTask(osThreadId_t* thisThreadId, CAN_HandleTypeDef* hcan)
       //Send periodic messages
       SendMsg0(hcan);
       SendMsg1(hcan);
-      SendMsg2(hcan);
+      //SendMsg2(hcan); //Skip msg 2, not used by dingoPDM-Max
       SendMsg3(hcan);
       SendMsg4(hcan);
       SendMsg5(hcan);
@@ -847,11 +824,11 @@ void SendKeypadMsg(CAN_HandleTypeDef *hcan)
   //Red 1-8
   nCanTxData[0] = 0;
   //Green 1-4, Red 9-12
-  nCanTxData[1] = ((pf[3].eState == ON)<<7) + ((pf[2].eState == ON)<<6) + ((pf[1].eState == ON)<<5) + ((pf[0].eState == ON)<<4);
+  nCanTxData[1] = 0;// ((pf[3].eState == ON)<<7) + ((pf[2].eState == ON)<<6) + ((pf[1].eState == ON)<<5) + ((pf[0].eState == ON)<<4);
   //Green 5-12
-  nCanTxData[2] = ((pf[7].eState == ON)<<3) + ((pf[6].eState == ON)<<2) + ((pf[5].eState == ON)<<1) + (pf[4].eState == ON);
+  nCanTxData[2] = 0;//((pf[7].eState == ON)<<3) + ((pf[6].eState == ON)<<2) + ((pf[5].eState == ON)<<1) + (pf[4].eState == ON);
   //Blue 1-8
-  nCanTxData[3] = ((pf[7].eState == OVERCURRENT)<<7) + ((pf[6].eState == OVERCURRENT)<<6) + ((pf[5].eState == OVERCURRENT)<<5) + ((pf[4].eState == OVERCURRENT)<<4) + ((pf[3].eState == OVERCURRENT)<<3) + ((pf[2].eState == OVERCURRENT)<<2) + ((pf[1].eState == OVERCURRENT)<<1) + (pf[0].eState == OVERCURRENT);
+  nCanTxData[3] = 0;//((pf[7].eState == OVERCURRENT)<<7) + ((pf[6].eState == OVERCURRENT)<<6) + ((pf[5].eState == OVERCURRENT)<<5) + ((pf[4].eState == OVERCURRENT)<<4) + ((pf[3].eState == OVERCURRENT)<<3) + ((pf[2].eState == OVERCURRENT)<<2) + ((pf[1].eState == OVERCURRENT)<<1) + (pf[0].eState == OVERCURRENT);
   //Blue 9-12
   nCanTxData[4] = 0;
   nCanTxData[5] = 0;
@@ -863,7 +840,7 @@ void SendKeypadMsg(CAN_HandleTypeDef *hcan)
   stCanTxHeader.StdId = 0x315;
   stCanTxHeader.DLC = 8; // Bytes to send
   //Red 1-8
-  nCanTxData[0] = ((pf[7].eState == FAULT)<<7) + ((pf[6].eState == FAULT)<<6) + ((pf[5].eState == FAULT)<<5) + ((pf[4].eState == FAULT)<<4) + ((pf[3].eState == FAULT)<<3) + ((pf[2].eState == FAULT)<<2) + ((pf[1].eState == FAULT)<<1) + (pf[0].eState == FAULT);
+  nCanTxData[0] = 0;// ((pf[7].eState == FAULT)<<7) + ((pf[6].eState == FAULT)<<6) + ((pf[5].eState == FAULT)<<5) + ((pf[4].eState == FAULT)<<4) + ((pf[3].eState == FAULT)<<3) + ((pf[2].eState == FAULT)<<2) + ((pf[1].eState == FAULT)<<1) + (pf[0].eState == FAULT);
   //Green 1-4, Red 9-12
   nCanTxData[1] = 0;
   //Green 5-12
@@ -920,10 +897,10 @@ void SendMsg4(CAN_HandleTypeDef *hcan)
   nCanTxData[1] = pf[1].nOC_Count;
   nCanTxData[2] = pf[2].nOC_Count;
   nCanTxData[3] = pf[3].nOC_Count;
-  nCanTxData[4] = pf[4].nOC_Count;
-  nCanTxData[5] = pf[5].nOC_Count;
-  nCanTxData[6] = pf[6].nOC_Count;
-  nCanTxData[7] = pf[7].nOC_Count;
+  nCanTxData[4] = 0;
+  nCanTxData[5] = 0;
+  nCanTxData[6] = 0;
+  nCanTxData[7] = 0;
 
   SendMsg(hcan, true);
 }
@@ -937,8 +914,8 @@ void SendMsg3(CAN_HandleTypeDef *hcan)
   stCanTxHeader.DLC = 8; // Bytes to send
   nCanTxData[0] = (pf[1].eState << 4) + pf[0].eState;
   nCanTxData[1] = (pf[3].eState << 4) + pf[2].eState;
-  nCanTxData[2] = (pf[5].eState << 4) + pf[4].eState;
-  nCanTxData[3] = (pf[7].eState << 4) + pf[6].eState;
+  nCanTxData[2] = 0;
+  nCanTxData[3] = 0;
   nCanTxData[4] = (*pVariableMap[60] << 1) + *pVariableMap[59];
   nCanTxData[5] = (stWiper.eState << 4) + stWiper.eSelectedSpeed;
   nCanTxData[6] = ((nFlashers[3] & 0x01) << 3) + ((nFlashers[2] & 0x01) << 2) +
@@ -953,18 +930,18 @@ void SendMsg3(CAN_HandleTypeDef *hcan)
 void SendMsg2(CAN_HandleTypeDef *hcan)
 {
   //=======================================================
-  // Build Msg 2 (Out 5-8 Current)
+  // Build Msg 2 (Not used)
   //=======================================================
   stCanTxHeader.StdId = stPdmConfig.stCanOutput.nBaseId + 2;
   stCanTxHeader.DLC = 8; // Bytes to send
-  nCanTxData[0] = pf[4].nIL >> 8;
-  nCanTxData[1] = pf[4].nIL;
-  nCanTxData[2] = pf[5].nIL >> 8;
-  nCanTxData[3] = pf[5].nIL;
-  nCanTxData[4] = pf[6].nIL >> 8;
-  nCanTxData[5] = pf[6].nIL;
-  nCanTxData[6] = pf[7].nIL >> 8;
-  nCanTxData[7] = pf[7].nIL;
+  nCanTxData[0] = 0;
+  nCanTxData[1] = 0;
+  nCanTxData[2] = 0;
+  nCanTxData[3] = 0;
+  nCanTxData[4] = 0;
+  nCanTxData[5] = 0;
+  nCanTxData[6] = 0;
+  nCanTxData[7] = 0;
 
   SendMsg(hcan, true);
 }
@@ -1137,8 +1114,8 @@ void Profet_Default_Init(){
   pf[2].nNum = 2;
   pf[2].nIN_Port = PF_IN3_GPIO_Port;
   pf[2].nIN_Pin = PF_IN3_Pin;
-  pf[2].nDEN_Port = PF_DEN3_4_GPIO_Port;
-  pf[2].nDEN_Pin = PF_DEN3_4_Pin;
+  pf[2].nDEN_Port = PF_DEN3_GPIO_Port;
+  pf[2].nDEN_Pin = PF_DEN3_Pin;
   pf[2].fKILIS = 59481;
 
   pf[3].eModel = BTS7008_2EPA_CH2;
@@ -1146,45 +1123,9 @@ void Profet_Default_Init(){
   pf[3].nNum = 3;
   pf[3].nIN_Port = PF_IN4_GPIO_Port;
   pf[3].nIN_Pin = PF_IN4_Pin;
-  pf[3].nDEN_Port = PF_DEN3_4_GPIO_Port;
-  pf[3].nDEN_Pin = PF_DEN3_4_Pin;
+  pf[3].nDEN_Port = PF_DEN4_GPIO_Port;
+  pf[3].nDEN_Pin = PF_DEN4_Pin;
   pf[3].fKILIS = 59481;
-
-  pf[4].eModel = BTS7008_2EPA_CH1;
-  pf[4].eState = OFF;
-  pf[4].nNum = 4;
-  pf[4].nIN_Port = PF_IN5_GPIO_Port;
-  pf[4].nIN_Pin = PF_IN5_Pin;
-  pf[4].nDEN_Port = PF_DEN5_6_GPIO_Port;
-  pf[4].nDEN_Pin = PF_DEN5_6_Pin;
-  pf[4].fKILIS = 59481;
-
-  pf[5].eModel = BTS7008_2EPA_CH2;
-  pf[5].eState = OFF;
-  pf[5].nNum = 5;
-  pf[5].nIN_Port = PF_IN6_GPIO_Port;
-  pf[5].nIN_Pin = PF_IN6_Pin;
-  pf[5].nDEN_Port = PF_DEN5_6_GPIO_Port;
-  pf[5].nDEN_Pin = PF_DEN5_6_Pin;
-  pf[5].fKILIS = 59481;
-
-  pf[6].eModel = BTS7008_2EPA_CH1;
-  pf[6].eState = OFF;
-  pf[6].nNum = 6;
-  pf[6].nIN_Port = PF_IN7_GPIO_Port;
-  pf[6].nIN_Pin = PF_IN7_Pin;
-  pf[6].nDEN_Port = PF_DEN7_8_GPIO_Port;
-  pf[6].nDEN_Pin = PF_DEN7_8_Pin;
-  pf[6].fKILIS = 59481;
-
-  pf[7].eModel = BTS7008_2EPA_CH2;
-  pf[7].eState = OFF;
-  pf[7].nNum = 7;
-  pf[7].nIN_Port = PF_IN8_GPIO_Port;
-  pf[7].nIN_Pin = PF_IN8_Pin;
-  pf[7].nDEN_Port = PF_DEN7_8_GPIO_Port;
-  pf[7].nDEN_Pin = PF_DEN7_8_Pin;
-  pf[7].fKILIS = 59481;
 }
 
 /*
