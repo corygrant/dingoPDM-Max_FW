@@ -973,7 +973,7 @@ void SendMsg0(CAN_HandleTypeDef *hcan)
   stCanTxHeader.StdId = stPdmConfig.stCanOutput.nBaseId + 0;
   stCanTxHeader.DLC = 8; // Bytes to send
   nCanTxData[0] = (nPdmInputs[1] << 1) + nPdmInputs[0];
-  nCanTxData[1] = eDeviceState;
+  nCanTxData[1] = eDeviceState + (PDM_TYPE << 4);
   nCanTxData[2] = nILTotal >> 8;
   nCanTxData[3] = nILTotal;
   nCanTxData[4] = nBattSense >> 8;
@@ -1078,7 +1078,7 @@ bool NewTxMsg(bool bState, bool bLastState, MsgType_t eType, MsgSrc_t eSrc, uint
 void OutputLogic(){
   for(int i=0; i<PDM_NUM_OUTPUTS; i++)
   {
-    pf[i].eReqState = (ProfetStateTypeDef)(*stPdmConfig.stOutput[i].pInput && nStarterDisable[i]);
+    pf[i].eReqState = ON;// (ProfetStateTypeDef)(*stPdmConfig.stOutput[i].pInput && nStarterDisable[i]);
   }
 }
 
@@ -1094,7 +1094,8 @@ int _write(int file, char *ptr, int len){
 
 void Profet_Default_Init(){
 
-  pf[0].eModel = BTS7002_1EPP;
+  pf[0].eModel = BTS70012_1ESP;
+  pf[0].eState = OFF;
   pf[0].nNum = 0;
   pf[0].nIN_Port = PF_IN1_GPIO_Port;
   pf[0].nIN_Pin = PF_IN1_Pin;
@@ -1102,7 +1103,8 @@ void Profet_Default_Init(){
   pf[0].nDEN_Pin = PF_DEN1_Pin;
   pf[0].fKILIS = 229421;
 
-  pf[1].eModel = BTS7002_1EPP;
+  pf[1].eModel = BTS70012_1ESP;
+  pf[1].eState = OFF;
   pf[1].nNum = 1;
   pf[1].nIN_Port = PF_IN2_GPIO_Port;
   pf[1].nIN_Pin = PF_IN2_Pin;
@@ -1110,7 +1112,8 @@ void Profet_Default_Init(){
   pf[1].nDEN_Pin = PF_DEN2_Pin;
   pf[1].fKILIS = 229421;
 
-  pf[2].eModel = BTS7008_2EPA_CH1;
+  pf[2].eModel = BTS70012_1ESP;
+  pf[2].eState = OFF;
   pf[2].nNum = 2;
   pf[2].nIN_Port = PF_IN3_GPIO_Port;
   pf[2].nIN_Pin = PF_IN3_Pin;
@@ -1118,7 +1121,7 @@ void Profet_Default_Init(){
   pf[2].nDEN_Pin = PF_DEN3_Pin;
   pf[2].fKILIS = 59481;
 
-  pf[3].eModel = BTS7008_2EPA_CH2;
+  pf[3].eModel = BTS70012_1ESP;
   pf[3].eState = OFF;
   pf[3].nNum = 3;
   pf[3].nIN_Port = PF_IN4_GPIO_Port;
@@ -1222,6 +1225,7 @@ uint8_t InitPdmConfig(I2C_HandleTypeDef* hi2c1)
   {
     pVariableMap[i + 51] = &nOutputs[i];
   }
+  //55-58 unused, outputs 5-8
 
   pVariableMap[59] = &stWiper.nSlowOut;
   pVariableMap[60] = &stWiper.nFastOut;

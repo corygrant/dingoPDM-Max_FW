@@ -583,7 +583,7 @@ void PdmConfig_SetDefault(PdmConfig_t* pConfig){
 
   //Inputs
   for(int i=0; i<PDM_NUM_INPUTS; i++){
-    pConfig->stInput[i].nEnabled = 0;
+    pConfig->stInput[i].nEnabled = 1;
     pConfig->stInput[i].eMode = MODE_MOMENTARY;
     pConfig->stInput[i].bInvert = true;
     pConfig->stInput[i].nDebounceTime = 20;
@@ -592,7 +592,7 @@ void PdmConfig_SetDefault(PdmConfig_t* pConfig){
 
   //Outputs
   for(int i=0; i<PDM_NUM_OUTPUTS; i++){
-    pConfig->stOutput[i].nEnabled = 0;
+    pConfig->stOutput[i].nEnabled = 1;
     pConfig->stOutput[i].nInput = 0;
     pConfig->stOutput[i].nCurrentLimit = 20;
     pConfig->stOutput[i].nInrushLimit = 30;
@@ -738,12 +738,15 @@ void PdmConfig_SetDefault(PdmConfig_t* pConfig){
 52  Output 2
 53  Output 3
 54  Output 4
-55  Wiper Slow Out
-56  Wiper Fast Out
-57 Flasher 1
-58 Flasher 2
-59 Flasher 3
-60 Flasher 4
-61 Flasher 5
-62  Always On
+55  Output 5
+56  Output 6
+57  Output 7
+58  Output 8
+59  Wiper Slow Out
+60  Wiper Fast Out
+61  Flasher 1
+62  Flasher 2
+63  Flasher 3
+64  Flasher 4
+65  Always On
  */

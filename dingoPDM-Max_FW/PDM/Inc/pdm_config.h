@@ -11,6 +11,7 @@
 #include "profet.h"
 #include "wipers.h"
 
+#define PDM_TYPE 1 //0 = PDM, 1 = PDM-MAX
 #define PDM_MAJOR_VERSION 0
 #define PDM_MINOR_VERSION 1
 #define PDM_BUILD 0
@@ -23,7 +24,7 @@
 #define PDM_NUM_WIPER_INTER_DELAYS 6
 #define PDM_NUM_WIPER_SPEED_MAP 8
 
-#define PDM_VAR_MAP_SIZE 62
+#define PDM_VAR_MAP_SIZE 66
 
 #define CAN_TX_SETTING_ID_OFFSET 30
 #define CAN_TX_MSG_ID_OFFSET 31
@@ -35,8 +36,6 @@ typedef enum{
   OPER_BITWISE_AND,
   OPER_BITWISE_NAND
 } PdmConfig_Operator_t;
-
-
 
 typedef enum{
   COND_AND,
