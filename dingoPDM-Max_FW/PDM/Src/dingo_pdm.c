@@ -1078,7 +1078,7 @@ bool NewTxMsg(bool bState, bool bLastState, MsgType_t eType, MsgSrc_t eSrc, uint
 void OutputLogic(){
   for(int i=0; i<PDM_NUM_OUTPUTS; i++)
   {
-    pf[i].eReqState = ON;// (ProfetStateTypeDef)(*stPdmConfig.stOutput[i].pInput && nStarterDisable[i]);
+    pf[i].eReqState = (ProfetStateTypeDef)(*stPdmConfig.stOutput[i].pInput && nStarterDisable[i]);
   }
 }
 
@@ -1101,7 +1101,7 @@ void Profet_Default_Init(){
   pf[0].nIN_Pin = PF_IN1_Pin;
   pf[0].nDEN_Port = PF_DEN1_GPIO_Port;
   pf[0].nDEN_Pin = PF_DEN1_Pin;
-  pf[0].fKILIS = 229421;
+  pf[0].fKILIS = 350000;
 
   pf[1].eModel = BTS70012_1ESP;
   pf[1].eState = OFF;
@@ -1110,7 +1110,7 @@ void Profet_Default_Init(){
   pf[1].nIN_Pin = PF_IN2_Pin;
   pf[1].nDEN_Port = PF_DEN2_GPIO_Port;
   pf[1].nDEN_Pin = PF_DEN2_Pin;
-  pf[1].fKILIS = 229421;
+  pf[1].fKILIS = 350000;
 
   pf[2].eModel = BTS70012_1ESP;
   pf[2].eState = OFF;
@@ -1119,7 +1119,7 @@ void Profet_Default_Init(){
   pf[2].nIN_Pin = PF_IN3_Pin;
   pf[2].nDEN_Port = PF_DEN3_GPIO_Port;
   pf[2].nDEN_Pin = PF_DEN3_Pin;
-  pf[2].fKILIS = 59481;
+  pf[2].fKILIS = 350000;
 
   pf[3].eModel = BTS70012_1ESP;
   pf[3].eState = OFF;
@@ -1128,7 +1128,7 @@ void Profet_Default_Init(){
   pf[3].nIN_Pin = PF_IN4_Pin;
   pf[3].nDEN_Port = PF_DEN4_GPIO_Port;
   pf[3].nDEN_Pin = PF_DEN4_Pin;
-  pf[3].fKILIS = 59481;
+  pf[3].fKILIS = 350000;
 }
 
 /*
